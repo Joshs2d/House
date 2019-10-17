@@ -1,0 +1,30 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+public class Timer : MonoBehaviour {
+
+    public Text timerText;
+    public float Times = 10;
+
+    void Start()
+    {
+    }
+    // Update is called once per frame
+    void Update () {
+        Times -= Time.deltaTime;
+
+        string minutes = ((int)Times / 60).ToString();
+        string seconds = (Times % 60).ToString("f6");
+
+        timerText.text = minutes + ":" + seconds;
+
+        if (Times <= 0)
+        {
+            SceneManager.LoadScene("Dead");
+        }
+            
+	}
+}

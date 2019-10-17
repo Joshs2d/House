@@ -1,0 +1,779 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
+public class PlayerController : MonoBehaviour
+{
+
+    public GameObject player;
+
+    public GameObject key_1;
+    public GameObject key_2;
+    public GameObject key_3;
+    public GameObject key_4;
+    public GameObject key_5;
+    public GameObject bookcase;
+    public GameObject bookcase_2;
+
+    public AudioSource click;
+
+    public Text text;
+    public Text text2;
+
+    private Vector3 distance = new Vector3(0, 0, 10);
+
+    private int timer = 0;
+
+    bool key1;
+    bool key2;
+    bool key3;
+    bool key4;
+    bool key5;
+    bool key6;
+
+    bool door1;
+    bool door2;
+    bool door3;
+    bool door4;
+    bool door5;
+    bool door6;
+
+    private enum position1 { pos0, pos1, pos2, pos3 };
+    private enum room_num1 { porch, room1, room2, room3,room4,room5,room6,courtyard,courtyard2,room7,room8,room9,room10,room11,room12,room13,end1,end2,end3 };
+    private position1 position;
+    private room_num1 room_num;
+
+    // Use this for initialization
+    void Start()
+    {
+        key1 = false;
+        key2 = false;
+        key3 = false;
+        key4 = false;
+        key5 = false;
+        key6 = false;
+
+        door1 = false;
+        door2 = false;
+        door3 = false;
+        door4 = false;
+        door5 = false;
+        door6 = false;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        update_unlock();
+        moveController();
+    }
+
+    void FixedUpdate()
+    {
+        timer++;
+        if(timer == 100)
+        {
+            timer = 0;
+            erase_text();
+        }
+        
+        
+    }
+
+private void textController()
+    {
+        if (room_num == room_num1.room1) { room1_text(); }
+        if (room_num == room_num1.room2) { room2_text(); }
+        else if (room_num == room_num1.room3) { room3_text(); }
+        else if (room_num == room_num1.room4) { room4_text(); }
+        else if (room_num == room_num1.room5) { room5_text(); }
+        else if (room_num == room_num1.room6) { room6_text(); }
+        else if (room_num == room_num1.courtyard) { courtyard_text(); }
+        else if (room_num == room_num1.courtyard2) { courtyard2_text(); }
+        else if (room_num == room_num1.room8) { room8_text(); }
+        else if (room_num == room_num1.room9) { room9_text(); }
+        else if (room_num == room_num1.room10) { room10_text(); }
+        else if (room_num == room_num1.room11) { room11_text(); }
+        else if (room_num == room_num1.room12) { room12_text(); }
+        else if (room_num == room_num1.room13) { room13_text(); }
+    }
+
+    private void moveController()
+    {
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            rotateRight();
+            player.transform.Rotate(0, 90, 0);
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            rotateLeft();
+            player.transform.Rotate(0, -90, 0);
+        }
+        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            can_move();
+        }
+        else
+        {
+            textController();
+        }
+    }
+
+    private void rotateRight()
+    {
+        if (position == position1.pos0) { position = position1.pos1; }
+        else if (position == position1.pos1) { position = position1.pos2; }
+        else if (position == position1.pos2) { position = position1.pos3; }
+        else if (position == position1.pos3) { position = position1.pos0; }
+    }
+
+    private void rotateLeft()
+    {
+        if (position == position1.pos0) { position = position1.pos3; }
+        else if (position == position1.pos3) { position = position1.pos2; }
+        else if (position == position1.pos2) { position = position1.pos1; }
+        else if (position == position1.pos1) { position = position1.pos0; }
+    }
+
+    private void update_unlock()
+    {
+        if(key1 == true)
+        {
+            door1 = true;
+        }
+        if (key2 == true)
+        {
+            door2 = true;
+        }
+        if (key3 == true)
+        {
+            door3 = true;
+        }
+        if (key4 == true)
+        {
+            door4 = true;
+        }
+        if (key5 == true)
+        {
+            door5 = true;
+        }
+        if (key6 == true)
+        {
+            door6 = true;
+        }
+    }
+
+    private void can_move()
+    {
+        if (room_num == room_num1.porch) {porch();}
+        else if (room_num == room_num1.room1) {room1();}
+        else if (room_num == room_num1.room2) { room2(); }
+        else if (room_num == room_num1.room3) { room3(); }
+        else if (room_num == room_num1.room4) { room4(); }
+        else if (room_num == room_num1.room5) { room5(); }
+        else if (room_num == room_num1.room6) { room6(); }
+        else if (room_num == room_num1.courtyard) { courtyard(); }
+        else if (room_num == room_num1.courtyard2) { courtyard2(); }
+        else if (room_num == room_num1.room8) { room8(); }
+        else if (room_num == room_num1.room9) { room9(); }
+        else if (room_num == room_num1.room10) { room10(); }
+        else if (room_num == room_num1.room11) { room11(); }
+        else if (room_num == room_num1.room12) { room12(); }
+        else if (room_num == room_num1.room13) { room13(); }
+    }
+
+    private void porch()
+    {
+        if (position == position1.pos0) //forward
+            {
+                room_num = room_num1.room1;
+                player.transform.Translate(distance);
+            }
+        else if(position == position1.pos2)
+        {
+            text.text = "I need to keep looking.";
+        }
+        else
+        {
+            text.text = "I can't go that way.";
+        }
+    }
+
+    private void room1()
+    {
+
+        if (position == position1.pos3) //forward
+        {
+            if (door1 == true)
+            {
+                room_num = room_num1.room2;
+                player.transform.Translate(distance);
+            }
+        }
+        else if (position == position1.pos2) //back
+            {
+                room_num = room_num1.porch;
+                player.transform.Translate(distance);
+            }
+        else
+            {
+                text.text = "I can't go that way.";
+            }
+    }
+
+  private void room1_text()
+    {
+        if (position == position1.pos0)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                key1 = true;
+                key_1.SetActive(false);
+                click.Play();
+                if (key1 == true)
+                {
+                    Debug.Log("Key Picked Up.");
+                    
+                }
+            }
+        }
+    }
+
+
+    private void room2()
+    {
+            if (position == position1.pos0) //forward
+            {
+                room_num = room_num1.room3;
+                player.transform.Translate(distance);
+            }
+            else if (position == position1.pos1) //back
+            {
+                room_num = room_num1.room1;
+                player.transform.Translate(distance);
+            }
+            else
+            {
+                text.text = "I can't go that way.";
+            }
+    }
+
+    private void room2_text()
+    {
+        if (position == position1.pos3)
+        {
+            text.text = "There's probably a good reason for these boards.";
+        }
+        else
+        {
+            text.text = "";
+        }
+
+    }
+
+    private void room3()
+    {
+            if (position == position1.pos1) //forward
+            {
+                room_num = room_num1.room4;
+                player.transform.Translate(distance);
+            }
+            else if (position == position1.pos2) //back
+            {
+                room_num = room_num1.room2;
+                player.transform.Translate(distance);
+            }
+            else
+            {
+                text.text = "I can't go that way.";
+            }
+    }
+
+    private void room3_text()
+    {
+        if (position == position1.pos0)
+        {
+
+        }
+        else if (position == position1.pos3)
+        {
+
+        }
+        else
+        {
+            text.text = "";
+        }
+
+    }
+
+    private void room4()
+    {
+            if (position == position1.pos1) //forward
+            {
+                room_num = room_num1.room5;
+                player.transform.Translate(distance);
+            }
+            else if (position == position1.pos3) //back
+            {
+                room_num = room_num1.room3;
+                player.transform.Translate(distance);
+            }
+            else
+            {
+                text.text = "I can't go that way.";
+            }
+    }
+
+    private void room4_text()
+    {
+        if (position == position1.pos2)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                key2 = true;
+                key_2.SetActive(false);
+                click.Play();
+                if (key2 == true)
+                {
+                    Debug.Log("Key Picked Up.");
+
+                }
+            }
+            text.text = "There looks like theres something in this bush.";
+        }
+        else
+        {
+            text.text = "";
+        }
+
+    }
+
+    private void room5()
+    {
+            if (position == position1.pos0) //forward
+            {
+                 if (door2 == true)
+                {
+                    room_num = room_num1.room6;
+                    player.transform.Translate(distance);
+                }
+            }
+            else if (position == position1.pos3)
+            {
+                room_num = room_num1.room4;
+                player.transform.Translate(distance);
+            }
+            else
+            {
+                text.text = "I can't go that way.";
+            }
+    }
+
+    private void room5_text()
+    {
+        if (position == position1.pos0)
+        {
+
+        }
+        else
+        {
+            text.text = "";
+        }
+
+    }
+
+    private void room6()
+    {
+            if (position == position1.pos0) //forward
+            {
+                room_num = room_num1.courtyard;
+                player.transform.Translate(distance);
+            }
+            else if (position == position1.pos3)
+            {
+                room_num = room_num1.room11;
+                player.transform.Translate(distance);
+            }
+            else if (position == position1.pos2) //back
+            {
+                room_num = room_num1.room5;
+                player.transform.Translate(distance);
+            }
+            else
+            {
+                text.text = "I can't go that way.";
+            }
+    }
+    private void room6_text()
+    {
+        if (position == position1.pos1)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                key3 = true;
+                key_3.SetActive(false);
+                click.Play();
+                if (key3 == true)
+                {
+                    Debug.Log("Key Picked Up.");
+
+                }
+            }
+            text.text = "An old clock, maybe its worth something?";
+        }
+        else
+        {
+            text.text = "";
+        }
+
+    }
+
+    private void room8()
+    {
+            if (position == position1.pos2) //forward
+            {
+                room_num = room_num1.room9;
+                player.transform.Translate(distance);
+            }
+            else if (position == position1.pos0) //back
+            {
+                room_num = room_num1.courtyard2;
+                player.transform.Translate(distance);
+            }
+            else
+            {
+                text.text = "I can't go that way.";
+            }
+    }
+
+    private void room8_text()
+    {
+        if (position == position1.pos0)
+        {
+
+        }
+        else if (position == position1.pos3)
+        {
+
+        }
+        else
+        {
+            text.text = "";
+        }
+
+    }
+
+    private void room9()
+    {
+            if (position == position1.pos2) //forward
+            {
+                room_num = room_num1.room10;
+                player.transform.Translate(distance);
+            }
+            else if (position == position1.pos0) //back
+            {
+                room_num = room_num1.room8;
+                player.transform.Translate(distance);
+            }
+            else
+            {
+                text.text = "I can't go that way.";
+            }
+    }
+
+    private void room9_text()
+    {
+        if (position == position1.pos1)
+        {
+            text.text = "There's a note on the table that reads: Tried to hide, now she waits for the tide.";
+        }
+        else
+        {
+            text.text = "";
+        }
+
+    }
+
+    private void room10()
+    {
+            if (position == position1.pos3) //forward
+            {
+            if (door4 == true)
+            {
+                room_num = room_num1.end1;
+                player.transform.Translate(distance);
+                end1();
+            }
+            }
+            else if (position == position1.pos0) //back
+            {
+                room_num = room_num1.room9;
+                player.transform.Translate(distance);
+            }
+            else
+            {
+                text.text = "I can't go that way.";
+            }
+    }
+
+    private void room10_text()
+    {
+        if (position == position1.pos1)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                key5 = true;
+                key_5.SetActive(false);
+                click.Play();
+                if (key5 == true)
+                {
+                    Debug.Log("Key Picked Up.");
+
+                }
+            }
+        }
+        else if(position == position1.pos3)
+        {
+            text.text = "Is that a draft, its really cold here.";
+        }
+        else
+        {
+            text.text = "";
+        }
+
+    }
+
+    private void room11()
+    {
+            if (position == position1.pos0) //forward
+            {
+                if (door3 == true)
+                {
+                    room_num = room_num1.end2;
+                    player.transform.Translate(distance);
+                    end2();
+                }
+            }
+            else if (position == position1.pos1) //back
+            {
+                room_num = room_num1.room6;
+                player.transform.Translate(distance);
+            }
+            else if (position == position1.pos3) //back
+            {
+                room_num = room_num1.room12;
+                player.transform.Translate(distance);
+            }
+            else
+            {
+                text.text = "I can't go that way.";
+            }
+    }
+
+    private void room11_text()
+    {
+        if (position == position1.pos0)
+        {
+            text.text = "I can leave through here.";
+        }
+        else if (position == position1.pos3)
+        {
+
+        }
+        else
+        {
+            text.text = "";
+        }
+
+    }
+
+    private void room12()
+        {
+            if (position == position1.pos3) //forward
+            {
+            if (door5 == true)
+            {
+                room_num = room_num1.room13;
+                player.transform.Translate(distance);
+            }
+            }
+            else if (position == position1.pos1) //back
+            {
+                room_num = room_num1.room11;
+                player.transform.Translate(distance);
+            }
+            else
+            {
+                text.text = "I can't go that way.";
+            }
+    }
+
+    private void room12_text()
+    {
+        if (position == position1.pos1)
+        {
+            text.text = "This place is such a maze.";
+        }
+        else if (position == position1.pos3)
+        {
+
+        }
+        else
+        {
+            text.text = "";
+        }
+
+    }
+
+    private void room13()
+    {
+            if (position == position1.pos2) //forward
+            {
+                if (door6 == true)
+                {
+                    room_num = room_num1.end3;
+                    player.transform.Translate(distance);
+                    end3();
+                }
+            }
+            else if (position == position1.pos1) //back
+            {
+                room_num = room_num1.room12;
+                player.transform.Translate(distance);
+            }
+            else
+            {
+                text.text = "I can't go that way.";
+            }
+    }
+
+    private void room13_text()
+    {
+        if (position == position1.pos2)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                key6 = true;
+                bookcase.SetActive(false);
+                bookcase_2.SetActive(true);
+                if (key6 == true)
+                {
+                    Debug.Log("Key Picked Up.");
+
+                }
+            }
+            text.text = "I think I can move this bookcase.";
+        }
+        else
+        {
+            text.text = "";
+        }
+
+    }
+
+    private void courtyard()
+    {
+            if (position == position1.pos1)
+            {
+                room_num = room_num1.courtyard2;
+                player.transform.Translate(distance);
+            }
+            else if (position == position1.pos2)
+            {
+                room_num = room_num1.room6;
+                player.transform.Translate(distance);
+            }
+            else
+            {
+                text.text = "I can't go that way.";
+            }
+    }
+
+    private void courtyard_text()
+    {
+        if (position == position1.pos0)
+        {
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                key4 = true;
+                key_4.SetActive(false);
+                click.Play();
+                if (key4 == true)
+                {
+                    Debug.Log("Key Picked Up.");
+
+                }
+            }
+            text.text = "An old gravestone: 'Here lies Benson.' That's sad.";
+        }
+        else if (position == position1.pos3)
+        {
+            text.text = "Looks like a hedge maze?";
+        }
+        else
+        {
+            text.text = "";
+        }
+
+    }
+
+    private void courtyard2()
+    {
+            if (position == position1.pos3)
+            {
+                room_num = room_num1.courtyard;
+                player.transform.Translate(distance);
+            }
+            else if (position == position1.pos2)
+            {
+                room_num = room_num1.room8;
+                player.transform.Translate(distance);
+            }
+            else
+            {
+                text.text = "I can't go that way.";
+            }
+    }
+
+    private void courtyard2_text()
+    {
+        if (position == position1.pos0)
+        {
+            text.text = "Just an old fountain.";
+        }
+        else
+        {
+            text.text = "";
+        }
+
+    }
+
+    private void dead()
+    {
+        SceneManager.LoadScene("Dead");
+    }
+
+    private void end1()
+    {
+        SceneManager.LoadScene("End1");
+    }
+
+    private void end2()
+    {
+        SceneManager.LoadScene("End2");
+    }
+
+    private void end3()
+    {
+        SceneManager.LoadScene("End3");
+    }
+
+    private void erase_text()
+    {
+        text.text = "";
+    }
+}
